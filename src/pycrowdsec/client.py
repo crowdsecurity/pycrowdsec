@@ -3,15 +3,19 @@ from time import sleep
 
 import requests
 
+from pycrowdsec.cache import Cache
+
 class StreamClient:
-    def __init__(self, api_key, lapi_url, scopes, interval, user_agent="CrowdSec-Python-Client"):
-        self.action_by_item = {}
+    def __init__(self, api_key, lapi_url, scopes, interval, user_agent="CrowdSec-Python-StreamClient"):
+        self.cache = Cache()
         self.api_key = api_key
         self.scopes = scopes
-        #TODO use https://github.com/wroberts/pytimeparse
         self.interval = int(interval)
         self.lapi_url = lapi_url
         self.user_agent = user_agent
+    
+    def get_action_for(self, item):
+        return self.cache.get(item)
 
     def _run(self):
         session = requests.Session()
@@ -32,32 +36,18 @@ class StreamClient:
             first_time = "false"
 
     def process_response(self, response):
-        print(response)
         if response["new"] is None : 
             response["new"] = []
 
         if response["deleted"] is None : 
             response["deleted"] = []
 
-        for decision in response["new"]:
-            self.action_by_item[decision["value"]] = decision["type"]
-
         for decision in response["deleted"]:
-            if decision["value"] in self.action_by_item:
-                del self.action_by_item[decision["value"]]
+            self.cache.delete(decision["value"])
 
+        for decision in response["new"]:
+            self.cache.insert(decision["value"], decision["type"])
 
     def run(self):
         t = threading.Thread(target=self._run, daemon=True)
         t.start()
-
-
-if __name__ == "__main__":
-    c = StreamClient(
-        lapi_url="http://localhost:8080/",
-        api_key="1ae6f423ec73130e87773f2c0c2477fe",
-        interval=5,
-        scopes="",
-    )
-    c.run()
-    sleep(600)

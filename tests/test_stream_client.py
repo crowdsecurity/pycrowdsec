@@ -15,7 +15,7 @@ class TestStreamClient(unittest.TestCase):
                 "scenario": "manual 'ban' from 'b436842423d302bb11cb6f1160d6cb30q9EGL7irEAzdUu1z'",
                 "scope": "Ip",
                 "type": "ban",
-                "value": "1.2.3.4"
+                "value": "18.22.10.20"
                 },
                 {
                 "duration": "-37m7.335622172s",
@@ -40,7 +40,8 @@ class TestStreamClient(unittest.TestCase):
             ]
         }
         c.process_response(response)
-        assert len(c.cache["ip"]) == 1
+        assert len(c.cache) == 1
 
-if __name__ == "__main__":
-    unittest.main()
+        response["new"] = None
+        c.process_response(response)
+        assert len(c.cache) == 0
