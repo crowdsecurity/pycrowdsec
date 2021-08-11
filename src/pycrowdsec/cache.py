@@ -1,6 +1,7 @@
 import ipaddress
 from itertools import chain
 
+
 class Cache:
     def __init__(self):
         self.ip_cache = IPCache()
@@ -25,7 +26,7 @@ class Cache:
             ipaddress.ip_network(item)
             self.ip_cache.delete(item)
         except ValueError:
-            try: 
+            try:
                 del self.normal_cache[item]
             except KeyError:
                 pass
@@ -33,21 +34,20 @@ class Cache:
     def __len__(self):
         return len(self.normal_cache) + len(self.ip_cache)
 
+
 class IPCache:
     def __init__(self):
         # This "reverse range" comprehension is deliberate. Since dicts are ordered
         # when we iterate on them, we get the "more specific"/smaller network first.
         self.ipv4_nodes_by_netmask = {
-            int(ipaddress.ip_network(f"0.0.0.0/{i}").netmask) : {}
-            for i in range(32, -1, -1) 
+            int(ipaddress.ip_network(f"0.0.0.0/{i}").netmask): {} for i in range(32, -1, -1)
         }
         self.ipv6_nodes_by_netmask = {
-            int(ipaddress.ip_network(f"::/{i}").netmask) : {}
-            for i in range(128, -1, -1)
+            int(ipaddress.ip_network(f"::/{i}").netmask): {} for i in range(128, -1, -1)
         }
 
     def _get_container_for_ip_network(self, ip_network):
-        if ip_network.version == 4 :
+        if ip_network.version == 4:
             return self.ipv4_nodes_by_netmask
         return self.ipv6_nodes_by_netmask
 
@@ -69,11 +69,13 @@ class IPCache:
         ip_decimal_repr = int(ip_network.network_address)
         container = self._get_container_for_ip_network(ip_network)
         for netmask, node in container.items():
-                if (netmask & ip_decimal_repr) in node :
-                    return  node[netmask & ip_decimal_repr]
+            if (netmask & ip_decimal_repr) in node:
+                return node[netmask & ip_decimal_repr]
 
     def __len__(self):
         length = 0
-        for _, items in chain(self.ipv4_nodes_by_netmask.items(), self.ipv6_nodes_by_netmask.items()):
+        for _, items in chain(
+            self.ipv4_nodes_by_netmask.items(), self.ipv6_nodes_by_netmask.items()
+        ):
             length += len(items)
         return length
