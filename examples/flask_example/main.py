@@ -35,12 +35,15 @@ def validate_captcha_resp(g_recaptcha_response):
 
 
 actions = {
-    "ban": lambda : redirect(url_for("ban_page")),
-    "captcha": lambda : redirect(url_for("captcha_page"))
-                if session.get("captcha_resp") not in valid_captcha_keys else None
+    "ban": lambda: redirect(url_for("ban_page")),
+    "captcha": lambda: redirect(url_for("captcha_page"))
+    if session.get("captcha_resp") not in valid_captcha_keys
+    else None,
 }
 
-app.before_request(get_crowdsec_middleware(actions, c.cache, exclude_views=["captcha_page", "ban_page"]))
+app.before_request(
+    get_crowdsec_middleware(actions, c.cache, exclude_views=["captcha_page", "ban_page"])
+)
 
 
 @app.route("/captcha", methods=["GET", "POST"])

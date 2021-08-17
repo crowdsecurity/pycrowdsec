@@ -5,7 +5,7 @@ from pycrowdsec.client import StreamClient
 
 class TestStreamClient(unittest.TestCase):
     def test_process_response(self):
-        c = StreamClient("", "", [], 10)
+        c = StreamClient("")
 
         response = {
             "deleted": [
