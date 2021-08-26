@@ -1,5 +1,5 @@
 def get_crowdsec_middleware(
-    actions_by_name, crowdsec_cache, ip_transformers=[lambda ip: ip], exclude_views=[]
+    actions_by_name, crowdsec_cache, ip_transformers=[lambda request: request.remote_addr], exclude_views=[]
 ):
     """
     Returns a middleware function for flask, which can be registered by passsing it to app.before_request
@@ -16,7 +16,9 @@ def get_crowdsec_middleware(
                 Values are action string for these entities. Eg {"ban": "1.2.3.4"}
 
             ip_transformers(Optional):
-                List of functions which take in an IP string and produce some other string.
+                List of functions which take in the request and produce some other string.
+                This produced string is looked up in the cache, if found then then the remediation
+                is applied.
                 Eg: [lambda ip: ip, lambda ip: get_country_code_for(ip)]
 
             exclude_views(Optional):
@@ -28,7 +30,7 @@ def get_crowdsec_middleware(
 
     def middleware():
         for ip_transformer in ip_transformers:
-            action_name = crowdsec_cache.get(ip_transformer(request.remote_addr))
+            action_name = crowdsec_cache.get(ip_transformer(request))
             if not action_name:
                 return
 

@@ -11,7 +11,6 @@ c = StreamClient(
     lapi_url="http://localhost:8080/",
     api_key=os.environ.get("CROWDSEC_LAPI_KEY"),  # your crowdsec LAPI bouncer key goes here
     interval=5,
-    scopes="",
 )
 c.run()
 
