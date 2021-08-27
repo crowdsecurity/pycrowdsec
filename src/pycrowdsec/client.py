@@ -1,10 +1,12 @@
 import threading
+import logging
 from time import sleep
 
 import requests
 
 from pycrowdsec.cache import Cache
 
+logger = logging.getLogger(__name__)
 
 class StreamClient:
     def __init__(
@@ -12,7 +14,7 @@ class StreamClient:
         api_key,
         lapi_url="http://localhost:8080/",
         interval=15,
-        user_agent="CrowdSec-Python-StreamClient",
+        user_agent="python-bouncer/0.0.1",
         scopes=["ip", "range"],
     ):
         """
@@ -54,6 +56,12 @@ class StreamClient:
                     "scopes": ",".join(self.scopes),
                 },
             )
+            try:
+                resp.raise_for_status()
+            except Exception as e:
+                logger.error(f"pycrowdsec got error {e}")
+                if first_time == "true":
+                    return
             self.process_response(resp.json())
             first_time = "false"
 

@@ -29,7 +29,6 @@ def crowdsec_middleware(get_response):
         settings.pycrowdsec_exclude_views = getattr(settings, "PYCROWDSEC_EXCLUDE_VIEWS", set())
 
     set_settings()
-    print("scopes ", settings.pycrowdsec_scopes)
     client = StreamClient(
         api_key=settings.PYCROWDSEC_LAPI_KEY,
         interval=settings.pycrowdsec_poll_interval,
