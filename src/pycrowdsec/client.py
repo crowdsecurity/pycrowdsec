@@ -1,15 +1,36 @@
 import threading
+import logging
 from time import sleep
 
 import requests
 
 from pycrowdsec.cache import Cache
 
+logger = logging.getLogger(__name__)
 
 class StreamClient:
     def __init__(
-        self, api_key, lapi_url, scopes, interval, user_agent="CrowdSec-Python-StreamClient"
+        self,
+        api_key,
+        lapi_url="http://localhost:8080/",
+        interval=15,
+        user_agent="python-bouncer/0.0.1",
+        scopes=["ip", "range"],
     ):
+        """
+        Parameters
+        ----------
+        api_key(Required) : str
+            Bouncer key for CrowdSec API.
+        lapi_url(Optional) : str
+            Base URL of CrowdSec API. Default is http://localhost:8080/ .
+        interval(Optional) : int
+            Query the CrowdSec API every "interval" second
+        user_agent(Optional) : str
+            User agent to use while calling the API.
+        scopes(Optional) : List[str]
+            List of decision scopes which shall be fetched. Default is ["ip", "range"]
+        """
         self.cache = Cache()
         self.api_key = api_key
         self.scopes = scopes
@@ -29,8 +50,18 @@ class StreamClient:
         while True:
             sleep(self.interval)
             resp = session.get(
-                url=f"{self.lapi_url}v1/decisions/stream", params={"startup": first_time}
+                url=f"{self.lapi_url}v1/decisions/stream",
+                params={
+                    "startup": first_time,
+                    "scopes": ",".join(self.scopes),
+                },
             )
+            try:
+                resp.raise_for_status()
+            except Exception as e:
+                logger.error(f"pycrowdsec got error {e}")
+                if first_time == "true":
+                    return
             self.process_response(resp.json())
             first_time = "false"
 

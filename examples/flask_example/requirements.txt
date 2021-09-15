@@ -1,0 +1,4 @@
+flask
+pycrowdsec
+requests
+expiringdict

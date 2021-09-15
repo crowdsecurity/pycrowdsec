@@ -9,7 +9,7 @@ def get_geoip_looker(db_path, scope="city"):
         try:
             scope_looker = getattr(reader, scope)
             return scope_looker(ip)
-        except AttributeError as e:
+        except AttributeError:
             raise AttributeError(f"The mmdb at {db_path} doesn't support {scope} ")
 
         except AddressNotFoundError:
