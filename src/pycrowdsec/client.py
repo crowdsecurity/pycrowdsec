@@ -1,12 +1,14 @@
 import threading
 import logging
 from time import sleep
+import redis
 
 import requests
 
 from pycrowdsec.cache import Cache
 
 logger = logging.getLogger(__name__)
+
 
 class StreamClient:
     def __init__(
@@ -16,6 +18,7 @@ class StreamClient:
         interval=15,
         user_agent="python-bouncer/0.0.1",
         scopes=["ip", "range"],
+        **kwargs,
     ):
         """
         Parameters
@@ -31,7 +34,11 @@ class StreamClient:
         scopes(Optional) : List[str]
             List of decision scopes which shall be fetched. Default is ["ip", "range"]
         """
-        self.cache = Cache()
+        if "redis_connection" in kwargs:
+            self.cache = Cache(redis_connection=kwargs["redis_connection"])
+        else:
+            self.cache = Cache()
+
         self.api_key = api_key
         self.scopes = scopes
         self.interval = int(interval)

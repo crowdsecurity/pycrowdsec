@@ -1,5 +1,8 @@
 def get_crowdsec_middleware(
-    actions_by_name, crowdsec_cache, ip_transformers=[lambda request: request.remote_addr], exclude_views=[]
+    actions_by_name,
+    crowdsec_cache,
+    ip_transformers=[lambda request: request.remote_addr],
+    exclude_views=[],
 ):
     """
     Returns a middleware function for flask, which can be registered by passsing it to app.before_request
