@@ -1,15 +1,13 @@
 import unittest
 
-from pycrowdsec.cache import Cache
+from pycrowdsec.cache import RedisCache
 from redislite import Redis
 
 
 class TestRedisIntegration(unittest.TestCase):
     def setUp(self) -> None:
         self.redis = Redis()
-        self.cache = Cache()
-        self.cache.use_redis = True
-        self.cache.redis = self.redis
+        self.cache = RedisCache(redis_connection=self.redis)
 
     def test_store_normal_to_redis(self):
         assert not self.redis.exists("pycrowdsec_cache")
@@ -25,30 +23,18 @@ class TestRedisIntegration(unittest.TestCase):
             b"ipv6_340282366920938463463374607431768211455_65535": b"captcha",
         }
 
-    def test_load_from_redis(self):
-        self.cache.insert("1.2.3.4", "captcha")
-        self.cache.insert("::ffff", "captcha")
-        self.cache.insert("TH", "ban")
-        old_cache = self.cache
-
-        new_cache = Cache()
-        new_cache.redis = self.redis
-
-        new_cache.load_from_redis()
-        assert new_cache == old_cache
-
     def test_delete(self):
         self.cache.insert("1.2.3.4", "captcha")
         self.cache.insert("::ffff", "captcha")
         self.cache.insert("TH", "ban")
 
-        assert len(self.redis.hgetall("pycrowdsec_cache")) == 3
+        assert self.redis.hlen("pycrowdsec_cache") == 3
 
         self.cache.delete("TH")
-        assert len(self.redis.hgetall("pycrowdsec_cache")) == 2
+        assert self.redis.hlen("pycrowdsec_cache") == 2
         self.cache.delete("1.2.3.4")
 
-        assert len(self.redis.hgetall("pycrowdsec_cache")) == 1
+        assert self.redis.hlen("pycrowdsec_cache") == 1
         self.cache.delete("::ffff")
 
-        assert len(self.redis.hgetall("pycrowdsec_cache")) == 0
+        assert self.redis.hlen("pycrowdsec_cache") == 0
