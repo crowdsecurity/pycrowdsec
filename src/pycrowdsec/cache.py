@@ -62,7 +62,7 @@ class RedisCache:
         responses = self.redis.hmget("pycrowdsec_cache", check_for)
         for response in responses:
             if response:
-                return response
+                return response.decode()
 
     def insert(self, item, action):
         key = item_to_string(item)
