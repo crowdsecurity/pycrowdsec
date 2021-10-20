@@ -7,6 +7,32 @@ from pycrowdsec.cache import Cache, RedisCache
 
 logger = logging.getLogger(__name__)
 
+class QueryClient:
+    def __init__(
+        self,
+        api_key,
+        lapi_url="http://localhost:8080/",
+        user_agent="python-bouncer/0.0.1",
+    ):
+        """
+        Parameters
+        ----------
+        api_key(Required) : str
+            Bouncer key for CrowdSec API.
+        lapi_url(Optional) : str
+            Base URL of CrowdSec API. Default is http://localhost:8080/ .
+        """
+
+        self.api_key = api_key
+        self.lapi_url = lapi_url
+        self.user_agent = user_agent
+
+    def get_action_for(self, item):
+        resp = requests.get(f"{self.lapi_url}v1/decisions?ip={item}", headers={
+            "X-Api-Key": self.api_key
+        }).json()
+        if resp:
+            return max(resp, key=lambda d : d["id"])["type"]
 
 class StreamClient:
     def __init__(
