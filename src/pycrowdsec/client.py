@@ -81,7 +81,6 @@ class StreamClient:
         )
         first_time = "true"
         while True:
-            sleep(self.interval)
             resp = session.get(
                 url=f"{self.lapi_url}v1/decisions/stream",
                 params={
@@ -97,6 +96,7 @@ class StreamClient:
                     return
             self.process_response(resp.json())
             first_time = "false"
+            sleep(self.interval)
 
     def process_response(self, response):
         if response["new"] is None:

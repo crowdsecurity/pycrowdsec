@@ -178,3 +178,13 @@ class TestCache(TestCase):
 
         self.cache.delete("1.2.0.0/16")
         assert self.cache.get("1.2.3.4") is None
+
+    def test_get_all(self):
+        self.cache.insert("CN", "captcha")
+        self.cache.insert("1.2.3.0/24", "ban")
+        self.cache.insert("ffff::/24", "ban")
+
+        resp = self.cache.get_all()
+        assert resp["ffff::/24"] == "ban"
+        assert resp["1.2.3.0/24"] == "ban"
+        assert resp["CN"] == "captcha"
