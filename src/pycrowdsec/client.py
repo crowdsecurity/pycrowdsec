@@ -7,6 +7,7 @@ from pycrowdsec.cache import Cache, RedisCache
 
 logger = logging.getLogger(__name__)
 
+
 class QueryClient:
     def __init__(
         self,
@@ -28,11 +29,12 @@ class QueryClient:
         self.user_agent = user_agent
 
     def get_action_for(self, item):
-        resp = requests.get(f"{self.lapi_url}v1/decisions?ip={item}", headers={
-            "X-Api-Key": self.api_key
-        }).json()
+        resp = requests.get(
+            f"{self.lapi_url}v1/decisions?ip={item}", headers={"X-Api-Key": self.api_key}
+        ).json()
         if resp:
-            return max(resp, key=lambda d : d["id"])["type"]
+            return max(resp, key=lambda d: d["id"])["type"]
+
 
 class StreamClient:
     def __init__(
