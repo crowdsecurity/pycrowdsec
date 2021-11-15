@@ -5,7 +5,7 @@ from redislite import Redis
 
 
 class TestRedisIntegration(unittest.TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.redis = Redis()
         self.cache = RedisCache(redis_connection=self.redis)
 
@@ -38,3 +38,14 @@ class TestRedisIntegration(unittest.TestCase):
         self.cache.delete("::ffff")
 
         assert self.redis.hlen("pycrowdsec_cache") == 0
+
+    def test_get_all(self):
+        self.cache.insert("1.2.3.4", "captcha")
+        self.cache.insert("::ffff", "captcha")
+        self.cache.insert("TH", "ban")
+
+        resp = self.cache.get_all()
+        assert resp["1.2.3.4/32"] == "captcha"
+        assert resp["TH"] == "ban"
+        assert resp["::ffff/128"] == "captcha"
+        
