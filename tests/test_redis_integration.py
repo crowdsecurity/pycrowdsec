@@ -48,4 +48,3 @@ class TestRedisIntegration(unittest.TestCase):
         assert resp["1.2.3.4/32"] == "captcha"
         assert resp["TH"] == "ban"
         assert resp["::ffff/128"] == "captcha"
-        

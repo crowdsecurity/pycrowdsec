@@ -78,7 +78,7 @@ class RedisCache:
     def insert(self, item, action):
         key = item_to_string(item)
         self.redis.hset("pycrowdsec_cache", key, action)
-    
+
     def get_all(self):
         resp = {}
         for item, action in self.redis.hgetall("pycrowdsec_cache").items():

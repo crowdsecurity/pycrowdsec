@@ -73,7 +73,7 @@ class StreamClient:
 
     def get_action_for(self, item):
         return self.cache.get(item)
-    
+
     def get_current_decisions(self):
         return self.cache.get_all()
 
