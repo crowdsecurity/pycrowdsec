@@ -32,6 +32,17 @@ class Cache:
             if resp:
                 return resp
 
+    def get_all(self):
+        resp = {}
+        for item, action in self.cache.items():
+            if item.startswith("normal_"):
+                resp[item.split("_", maxsplit=1)[1]] = action
+            elif item.startswith("ipv"):
+                _, netmask, address = item.split("_")
+                ip_network = ipaddress.ip_network((int(address), bin(int(netmask)).count("1")))
+                resp[ip_network.__str__()] = action
+        return resp
+
     def insert(self, item, action):
         key = item_to_string(item)
         self.cache[key] = action
@@ -67,6 +78,18 @@ class RedisCache:
     def insert(self, item, action):
         key = item_to_string(item)
         self.redis.hset("pycrowdsec_cache", key, action)
+
+    def get_all(self):
+        resp = {}
+        for item, action in self.redis.hgetall("pycrowdsec_cache").items():
+            item, action = item.decode(), action.decode()
+            if item.startswith("normal_"):
+                resp[item.split("_", maxsplit=1)[1]] = action
+            elif item.startswith("ipv"):
+                _, netmask, address = item.split("_")
+                ip_network = ipaddress.ip_network((int(address), bin(int(netmask)).count("1")))
+                resp[ip_network.__str__()] = action
+        return resp
 
     def delete(self, item):
         key = item_to_string(item)
