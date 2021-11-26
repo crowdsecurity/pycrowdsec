@@ -4,6 +4,7 @@ from time import sleep
 import requests
 
 from pycrowdsec.cache import Cache, RedisCache
+from importlib.metadata import version
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +43,7 @@ class StreamClient:
         api_key,
         lapi_url="http://localhost:8080/",
         interval=15,
-        user_agent="python-bouncer/0.0.1",
+        user_agent=f"python-bouncer/{version('pycrowdsec')}",
         scopes=["ip", "range"],
         **kwargs,
     ):
@@ -75,7 +76,8 @@ class StreamClient:
         return self.cache.get(item)
 
     def get_current_decisions(self):
-        return self.cache.get_all()
+        c = self.cache
+        return c.get_all()
 
     def _run(self):
         session = requests.Session()
