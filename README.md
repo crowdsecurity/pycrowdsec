@@ -23,7 +23,12 @@ You'll also need an instance of CrowdSec running, see installation instructions 
 
 ## Client library:
 
-Basic Usage:
+### StreamClient
+
+This client polls CrowdSec LAPI and keeps track of active decisions.
+In the below example assume that there's a ban decisions for IP "77.88.99.66" and captcha decision for country "CN".
+
+**Basic Usage:**
 
 ```python
 from pycrowdsec.client import StreamClient
@@ -32,6 +37,12 @@ client = StreamClient(
 )
 
 client.run() # This starts polling the API
+
+assert client.get_current_decisions() == {
+    "77.88.99.66": "ban"
+    "CN": "captcha"
+}
+
 assert client.get_action_for("77.88.99.66") == "ban"
 assert client.get_action_for("CN") == "captcha"
 ```
@@ -41,7 +52,7 @@ The `CROWDSEC_API_KEY` can be obtained by running
 sudo cscli bouncers add python_bouncer
 ```
 
-The `StreamClient`'s constructor also accepts the following optional parameters for more advanced configruations.
+The `StreamClient`'s constructor also accepts the following optional parameters for more advanced configurations.
 
 **lapi_url** : str
     Base URL of CrowdSec API. Default is http://localhost:8080/ .
@@ -54,6 +65,37 @@ The `StreamClient`'s constructor also accepts the following optional parameters 
 
 **scopes** : List[str]
     List of decision scopes which shall be fetched. Default is ["ip", "range"]
+
+### QueryClient
+
+This client will query CrowdSec LAPI to check whether the requested item has any decisions against it.
+In the below example assume that there's a ban decisions for IP "77.88.99.66" and captcha decision for country "CN".
+
+
+**Basic Usage:**
+
+```python
+
+from pycrowdsec.client import StreamClient
+client = StreamClient(
+    api_key=<CROWDSEC_API_KEY>,
+)
+
+client.run() # This starts polling the API
+
+assert client.get_action_for("77.88.99.66") == "ban"
+assert client.get_action_for("CN") == "captcha"
+
+```
+
+The `QueryClient`'s constructor also accepts the following optional parameters for more advanced configurations.
+
+**lapi_url** : str
+    Base URL of CrowdSec API. Default is http://localhost:8080/ .
+
+**user_agent** : str
+    User agent to use while calling the API.
+
 
 ## Flask Integration:
 
