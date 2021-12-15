@@ -1,5 +1,5 @@
 <p align=center>
-<img src="https://github.com/sbs2001/pycrowdsec/blob/dev/assets/pycrowdsec.jpg" width="280" height="300" >
+<img src="https://raw.githubusercontent.com/crowdsecurity/pycrowdsec/main/assets/pycrowdsec.jpg" width="280" height="300" >
 </p>
 
 <p align="center">
