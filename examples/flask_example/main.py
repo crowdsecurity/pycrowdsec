@@ -41,7 +41,7 @@ actions = {
 }
 
 app.before_request(
-    get_crowdsec_middleware(actions, c.cache, exclude_views=["captcha_page", "ban_page"])
+    get_crowdsec_middleware(actions, c.cache, exclude_views=("captcha_page", "ban_page"))
 )
 
 
@@ -49,7 +49,7 @@ app.before_request(
 def captcha_page():
     if request.method == "GET":
         return render_template(
-            "./captcha_page.html", public_key=os.environ.get("GOOGLE_RECAPTCHA_SITE_KEY")
+            "captcha_page.html", public_key=os.environ.get("GOOGLE_RECAPTCHA_SITE_KEY")
         )
     elif request.method == "POST":
         captcha_resp = request.form.get("g-recaptcha-response")

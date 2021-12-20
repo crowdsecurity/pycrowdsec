@@ -34,4 +34,4 @@ jobs:
         black --check -l 100 ./
     - name: Tests
       run: |
-        python -m unittest
+        python -m unittest discover -s ./tests/
