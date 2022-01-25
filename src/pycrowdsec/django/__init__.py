@@ -1,10 +1,11 @@
 from pycrowdsec.client import StreamClient
 
+from django.core.exceptions import PermissionDenied
+from django.conf import settings
+from django.urls import resolve
+
 
 def crowdsec_middleware(get_response):
-    from django.conf import settings
-    from django.urls import resolve
-
     def set_settings():
         if not getattr(settings, "PYCROWDSEC_LAPI_KEY"):
             raise Exception("PYCROWDSEC_LAPI_KEY is required")
@@ -61,6 +62,4 @@ def crowdsec_middleware(get_response):
 
 
 def default_ban_action(request):
-    from django.core.exceptions import PermissionDenied
-
     raise PermissionDenied

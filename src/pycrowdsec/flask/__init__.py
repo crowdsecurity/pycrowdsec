@@ -1,8 +1,11 @@
+from flask import request
+
+
 def get_crowdsec_middleware(
     actions_by_name,
     crowdsec_cache,
     ip_transformers=[lambda request: request.remote_addr],
-    exclude_views=[],
+    exclude_views=(),
 ):
     """
     Returns a middleware function for flask, which can be registered by passsing it to app.before_request
@@ -16,7 +19,7 @@ def get_crowdsec_middleware(
             crowdsec_cache(Required):
                 An instance of pycrowdsec.cache.Cache.
                 It is a KV store, keys being entities like IP, Country strings etc.
-                Values are action string for these entities. Eg {"ban": "1.2.3.4"}
+                Values are action string for these entities. Eg {"1.2.3.4": "ban"}
 
             ip_transformers(Optional):
                 List of functions which take in the request and produce some other string.
@@ -28,8 +31,6 @@ def get_crowdsec_middleware(
                 List of view function names, to exclude crowdsec actions.
                 Example: ["ban_view", "captcha_page", "contact_page"]
     """
-
-    from flask import request
 
     def middleware():
         for ip_transformer in ip_transformers:
