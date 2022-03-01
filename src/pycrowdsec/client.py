@@ -14,7 +14,7 @@ class QueryClient:
         self,
         api_key,
         lapi_url="http://localhost:8080/",
-        user_agent="python-bouncer/0.0.1",
+        user_agent=f"python-bouncer/{version('pycrowdsec')}",
     ):
         """
         Parameters
