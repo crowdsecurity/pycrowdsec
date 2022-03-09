@@ -1,10 +1,11 @@
-import threading
 import logging
+import threading
+from importlib.metadata import version
 from time import sleep
+
 import requests
 
 from pycrowdsec.cache import Cache, RedisCache
-from importlib.metadata import version
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +72,7 @@ class StreamClient:
         self.interval = int(interval)
         self.lapi_url = lapi_url
         self.user_agent = user_agent
+        self.death_reason = None
 
     def get_action_for(self, item):
         return self.cache.get(item)
@@ -86,19 +88,22 @@ class StreamClient:
         )
         first_time = "true"
         while True:
-            resp = session.get(
-                url=f"{self.lapi_url}v1/decisions/stream",
-                params={
-                    "startup": first_time,
-                    "scopes": ",".join(self.scopes),
-                },
-            )
             try:
+                resp = session.get(
+                    url=f"{self.lapi_url}v1/decisions/stream",
+                    params={
+                        "startup": first_time,
+                        "scopes": ",".join(self.scopes),
+                    },
+                )
                 resp.raise_for_status()
             except Exception as e:
                 logger.error(f"pycrowdsec got error {e}")
                 if first_time == "true":
+                    self.death_reason = e
                     return
+                sleep(self.interval)
+                continue
             self.process_response(resp.json())
             first_time = "false"
             sleep(self.interval)
@@ -117,5 +122,8 @@ class StreamClient:
             self.cache.insert(decision["value"], decision["type"])
 
     def run(self):
-        t = threading.Thread(target=self._run, daemon=True)
-        t.start()
+        self.t = threading.Thread(target=self._run, daemon=True)
+        self.t.start()
+
+    def is_running(self):
+        return self.t.is_alive()

@@ -1,8 +1,8 @@
-from pycrowdsec.client import StreamClient
-
-from django.core.exceptions import PermissionDenied
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.urls import resolve
+
+from pycrowdsec.client import StreamClient
 
 
 def crowdsec_middleware(get_response):

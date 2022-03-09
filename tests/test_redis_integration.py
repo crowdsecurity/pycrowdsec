@@ -1,7 +1,8 @@
 import unittest
 
-from pycrowdsec.cache import RedisCache
 from redislite import Redis
+
+from pycrowdsec.cache import RedisCache
 
 
 class TestRedisIntegration(unittest.TestCase):

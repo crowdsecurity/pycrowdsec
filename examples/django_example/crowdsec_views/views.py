@@ -1,11 +1,10 @@
 import os
 
 import requests
-
-from django.http.response import HttpResponse
-from django.shortcuts import render, redirect
-from django.core.exceptions import PermissionDenied
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
+from django.http.response import HttpResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse
 
 # Create your views here.
