@@ -2,8 +2,7 @@ import os
 
 import requests
 from expiringdict import ExpiringDict
-from flask import (Flask, abort, redirect, render_template, request, session,
-                   url_for)
+from flask import Flask, abort, redirect, render_template, request, session, url_for
 
 from pycrowdsec.client import StreamClient
 from pycrowdsec.flask import get_crowdsec_middleware
