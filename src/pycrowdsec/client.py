@@ -78,8 +78,7 @@ class StreamClient:
         return self.cache.get(item)
 
     def get_current_decisions(self):
-        c = self.cache
-        return c.get_all()
+        return self.cache.get_all()
 
     def _run(self):
         session = requests.Session()
