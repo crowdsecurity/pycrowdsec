@@ -1,2 +1,6 @@
+https://github.com/crowdsecurity/pytest-cs/archive/main.zip
 black
 redislite
+pytest
+pytest-dotenv 
+
