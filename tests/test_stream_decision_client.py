@@ -50,6 +50,16 @@ class TestStreamDecisionClient(unittest.TestCase):
         assert len(list(self.client.get_new_decision())) == 0
         assert len(list(self.client.get_deleted_decision())) == 0
 
+    def test_empty(self):
+        assert self.client.new_decisions.empty() == True
+        assert self.client.deleted_decisions.empty() == True
+
+        for _ in self.client.get_deleted_decision():
+            pass
+
+        for _ in self.client.get_new_decision():
+            pass
+
     def test_read_write_race(self):
         response = {
             "deleted": [
