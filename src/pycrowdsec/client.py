@@ -45,12 +45,16 @@ class QueryClient:
         ca_cert_path="",
     ):
         """
-        Parameters
-        ----------
-        api_key(Required) : str
-            Bouncer key for CrowdSec API.
-        lapi_url(Optional) : str
-            Base URL of CrowdSec API. Default is http://localhost:8080/ .
+        Initializes a new instance of the CrowdSec API client.
+
+        Args:
+            api_key (str): The API key to use for authentication.
+            lapi_url (str): The URL of the local API server.
+            user_agent (str): The user agent string to use for requests.
+            insecure_skip_verify (bool): Whether to skip SSL verification.
+            key_path (str): The path to the client's private key file.
+            cert_path (str): The path to the client's certificate file.
+            ca_cert_path (str): The path to the CA certificate file.
         """
 
         if api_key == "" and key_path == "" and cert_path == "":
@@ -89,18 +93,22 @@ class BaseStreamClient(ABC):
         **kwargs,
     ):
         """
-        Parameters
-        ----------
-        api_key(Required) : str
-            Bouncer key for CrowdSec API.
-        lapi_url(Optional) : str
-            Base URL of CrowdSec API. Default is http://localhost:8080/ .
-        interval(Optional) : int
-            Query the CrowdSec API every "interval" second
-        user_agent(Optional) : str
-            User agent to use while calling the API.
-        scopes(Optional) : List[str]
-            List of decision scopes which shall be fetched. Default is ["ip", "range"]
+        Initializes a new instance of the CrowdSec API client.
+
+        Args:
+            api_key (str): The API key to use for authentication.
+            lapi_url (str): The URL of the local API server.
+            interval (int): The interval in seconds between each decision request.
+            user_agent (str): The user agent string to use for requests.
+            scopes (List[str]): The list of scopes to request from the API.
+            include_scenarios_containing (List[str]): The list of scenario names to include in decisions.
+            exclude_scenarios_containing (List[str]): The list of scenario names to exclude from decisions.
+            only_include_decisions_from (List[str]): The list of decision sources to include in decisions.
+            insecure_skip_verify (bool): Whether to skip SSL verification.
+            key_path (str): The path to the client's private key file.
+            cert_path (str): The path to the client's certificate file.
+            ca_cert_path (str): The path to the CA certificate file.
+            **kwargs: Additional keyword arguments to pass to the requests library.
         """
 
         if api_key == "" and key_path == "" and cert_path == "":
