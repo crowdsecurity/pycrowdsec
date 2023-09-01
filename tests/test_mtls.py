@@ -39,7 +39,7 @@ def test_tls_mutual(crowdsec, certs_dir):
         )
 
         bouncer.cycle("true")
-        cs.wait_for_log("*client OU ?agent-ou? is allowed vs required OU ?bouncer-ou?*")
+        cs.wait_for_log("*client OU [bouncer-ou] is allowed vs required OU [bouncer-ou]*")
 
         bouncer = StreamDecisionClient(
             "",
