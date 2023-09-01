@@ -82,10 +82,10 @@ class BaseStreamClient(ABC):
         lapi_url="http://localhost:8080/",
         interval=15,
         user_agent=f"python-bouncer/{__version__}",
-        scopes=["ip", "range"],
-        include_scenarios_containing=[],
-        exclude_scenarios_containing=[],
-        only_include_decisions_from=[],
+        scopes=("ip", "range"),
+        include_scenarios_containing=(),
+        exclude_scenarios_containing=(),
+        only_include_decisions_from=(),
         insecure_skip_verify=False,
         key_path="",
         cert_path="",
@@ -100,10 +100,10 @@ class BaseStreamClient(ABC):
             lapi_url (str): The URL of the local API server.
             interval (int): The interval in seconds between each decision request.
             user_agent (str): The user agent string to use for requests.
-            scopes (List[str]): The list of scopes to request from the API.
-            include_scenarios_containing (List[str]): The list of scenario names to include in decisions.
-            exclude_scenarios_containing (List[str]): The list of scenario names to exclude from decisions.
-            only_include_decisions_from (List[str]): The list of decision sources to include in decisions.
+            scopes (Tuple[str]): The list of scopes to request from the API.
+            include_scenarios_containing (Tuple[str]): The list of scenario names to include in decisions.
+            exclude_scenarios_containing (Tuple[str]): The list of scenario names to exclude from decisions.
+            only_include_decisions_from (Tuple[str]): The list of decision sources to include in decisions.
             insecure_skip_verify (bool): Whether to skip SSL verification.
             key_path (str): The path to the client's private key file.
             cert_path (str): The path to the client's certificate file.
@@ -111,7 +111,7 @@ class BaseStreamClient(ABC):
             **kwargs: Additional keyword arguments to pass to the requests library.
         """
 
-        if api_key == "" and key_path == "" and cert_path == "":
+        if api_key == "" and (key_path == "" and cert_path == ""):
             raise ValueError("You must provide an api_key or a key_path and cert_path")
 
         self.api_key = api_key
@@ -131,14 +131,14 @@ class BaseStreamClient(ABC):
 
     def cycle(self, first_time):
         try:
-            url=f"{self.lapi_url}v1/decisions/stream"
-            params={
-                    "startup": first_time,
-                    "scopes": ",".join(self.scopes),
-                    "scenarios_containing": ",".join(self.include_scenarios_containing),
-                    "scenarios_not_containing": ",".join(self.exclude_scenarios_containing),
-                    "origins": ",".join(self.only_include_decisions_from),
-                }
+            url = f"{self.lapi_url}v1/decisions/stream"
+            params = {
+                "startup": first_time,
+                "scopes": ",".join(self.scopes),
+                "scenarios_containing": ",".join(self.include_scenarios_containing),
+                "scenarios_not_containing": ",".join(self.exclude_scenarios_containing),
+                "origins": ",".join(self.only_include_decisions_from),
+            }
             for k, v in params.copy().items():
                 if not v:
                     del params[k]
