@@ -131,23 +131,28 @@ class BaseStreamClient(ABC):
 
     def cycle(self, first_time):
         try:
-            resp = self.session.get(
-                url=f"{self.lapi_url}v1/decisions/stream",
-                params={
+            url=f"{self.lapi_url}v1/decisions/stream"
+            params={
                     "startup": first_time,
                     "scopes": ",".join(self.scopes),
                     "scenarios_containing": ",".join(self.include_scenarios_containing),
                     "scenarios_not_containing": ",".join(self.exclude_scenarios_containing),
                     "origins": ",".join(self.only_include_decisions_from),
-                },
+                }
+            for k, v in params.copy().items():
+                if not v:
+                    del params[k]
+            resp = self.session.get(
+                url=url,
+                params=params,
             )
             resp.raise_for_status()
+            self.process_response(resp.json())
         except Exception as e:
             logger.error(f"pycrowdsec got error {e}")
             if first_time == "true":
                 self.death_reason = e
                 raise e
-        self.process_response(resp.json())
 
     def run(self):
         self.cycle("true")  # So we catch errors on startup
