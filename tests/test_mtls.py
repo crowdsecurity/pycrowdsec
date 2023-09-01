@@ -13,6 +13,7 @@ def test_tls_mutual(crowdsec, certs_dir):
         "LAPI_KEY_FILE": "/etc/ssl/crowdsec/lapi.key",
         "USE_TLS": "true",
         "LOCAL_API_URL": "https://localhost:8080",
+        "LEVEL_DEBUG": "1"
     }
 
     certs = certs_dir(lapi_hostname="lapi")
