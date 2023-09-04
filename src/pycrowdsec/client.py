@@ -22,9 +22,14 @@ logger = logging.getLogger(__name__)
 def create_session(api_key, insecure_skip_verify, key_path, cert_path, ca_cert_path, user_agent):
     session = requests.Session()
     session.verify = not insecure_skip_verify
+    session.headers.update(
+        {
+            "User-Agent": user_agent,
+        },
+    )
     if api_key:
         session.headers.update(
-            {"X-Api-Key": api_key, "User-Agent": user_agent},
+            {"X-Api-Key": api_key},
         )
     else:
         if ca_cert_path:
