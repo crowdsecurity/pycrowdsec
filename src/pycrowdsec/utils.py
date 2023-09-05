@@ -1,5 +1,4 @@
 def get_geoip_looker(db_path, scope="city"):
-
     import geoip2.database
     from geoip2.errors import AddressNotFoundError
 
